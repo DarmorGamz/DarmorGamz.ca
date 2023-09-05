@@ -6,11 +6,13 @@ use App\Http\Controllers\InfoUserController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ResetController;
 use App\Http\Controllers\SessionsController;
+use App\Http\Controllers\SpotifyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\GithubController;
+use App\Http\Controllers\SMSController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -33,6 +35,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('projects', function () {
         return view('projects');
     })->name('projects');
+
+    Route::get('/spotify', function () {
+        return view('spotify');
+//        SpotifyController::getNewRefreshToken();
+    })->middleware('spotify-auth')->name('spotify');
+
+    Route::get('/auth/spotify', [SpotifyController::class, 'redirectToSpotify']);
+    Route::get('/auth/spotify/callback', [SpotifyController::class, 'handleSpotifyCallback']);
+    Route::get('/spotify-getCurrentTrack', [SpotifyController::class, 'getCurrentTrack']);
 
 	Route::get('billing', function () {
 		return view('billing');
@@ -64,7 +75,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/login', function () {
 		return view('dashboard');
 	})->name('sign-up');
+
     Route::get('/Github', [GithubController::class, 'getStats']);
+    Route::get('/Text/{message}', [SMSController::class, 'sendSMS']);
 });
 
 
@@ -78,7 +91,6 @@ Route::group(['middleware' => 'guest'], function () {
 	Route::post('/forgot-password', [ResetController::class, 'sendEmail']);
 	Route::get('/reset-password/{token}', [ResetController::class, 'resetPass'])->name('password.reset');
 	Route::post('/reset-password', [ChangePasswordController::class, 'changePassword'])->name('password.update');
-
 });
 
 Route::get('/login', function () {

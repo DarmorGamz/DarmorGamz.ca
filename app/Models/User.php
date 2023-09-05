@@ -44,5 +44,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-    
+    public function userSpotify() {
+        return $this->hasOne(UserSpotify::class, 'user_id');
+    }
 }

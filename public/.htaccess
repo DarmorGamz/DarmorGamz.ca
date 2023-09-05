@@ -5,8 +5,13 @@
 
     RewriteEngine On
 
-#    RewriteCond %{HTTPS} !on
-#    RewriteRule ^.*$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+    RewriteCond %{REQUEST_URI} !^/phpmyadmin/index.php$ [NC]
+    RewriteCond %{HTTPS} !on
+    RewriteRule ^.*$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # Redirect to HTTPS for all URLs except /phpmyadmin/index.php and URLs with double slashes
+#    RewriteCond %{REQUEST_URI} !^/phpmyadmin/index.php$ [NC]
+#    RewriteRule ^(.*)$ https://darmorgamz.ca/$1 [R=301,L]
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
