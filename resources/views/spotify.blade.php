@@ -26,6 +26,43 @@
             });
         }
 
+        function previousTrack() {
+            $.ajax({
+                url: '/spotify-Previous', // API route URL
+                method: 'GET',
+                success: function (data) {
+                },
+                error: function (xhr, status, error) {
+                    // Handle errors if necessary
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+        function startpauseTrack() {
+            $.ajax({
+                url: '/spotify-PlayPause', // API route URL
+                method: 'GET',
+                success: function (data) {
+                },
+                error: function (xhr, status, error) {
+                    // Handle errors if necessary
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+        function nextTrack() {
+            $.ajax({
+                url: '/spotify-Next', // API route URL
+                method: 'GET',
+                success: function (data) {
+                },
+                error: function (xhr, status, error) {
+                    // Handle errors if necessary
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+
         // Call the updateCurrentTrack function when the page loads
         updateCurrentTrack();
 
@@ -64,18 +101,24 @@
                             <div class="row mt-auto align-items-center justify-content-center border-1">
                                 <div class="col-lg-2">
                                     <div class="d-flex flex-column">
-                                        <i class="fa fa-backward text-dark text-gradient text-lg top-0"></i>
+                                        <button onclick="previousTrack()" class="border-0 p-0 m-0" style="background-color: white">
+                                            <i class="fa fa-backward text-dark text-gradient text-lg top-0"></i>
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="col-lg-2">
                                     <div class="d-flex flex-column">
-                                        <i class="fa fa-play text-dark text-gradient text-lg top-0"></i>
+                                        <button onclick="startpauseTrack()" class="border-0 p-0 m-0" style="background-color: white">
+                                            <i class="fa fa-play text-dark text-gradient text-lg top-0"></i>
+                                        </button>
     {{--                                    <i class="fa fa-pause text-dark text-gradient text-lg top-0"></i>--}}
                                     </div>
                                 </div>
                                 <div class="col-lg-2">
                                     <div class="d-flex flex-column">
-                                        <i class="fa fa-forward text-dark text-gradient text-lg top-0"></i>
+                                        <button onclick="nextTrack()" class="border-0 p-0 m-0" style="background-color: white">
+                                            <i class="fa fa-forward text-dark text-gradient text-lg top-0"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>

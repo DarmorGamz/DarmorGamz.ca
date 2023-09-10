@@ -34,7 +34,7 @@ class SpotifyController extends Controller {
         }
     }
     public function redirectToSpotify() {
-        $scopes = ['user-read-email', 'user-library-read', 'user-read-currently-playing', 'user-read-playback-state']; // Define the required scopes
+        $scopes = ['user-read-email', 'user-library-read', 'user-read-currently-playing', 'user-read-playback-state, user-modify-playback-state']; // Define the required scopes
 
         $query = http_build_query([
             'client_id' => env('SPOTIFY_CLIENT_ID'),
@@ -111,12 +111,10 @@ class SpotifyController extends Controller {
             self::getNewRefreshToken();
         }
 
-        $accessToken = Auth::user()->UserSpotify->access_token;
-
         $client = new Client();
         $response = $client->get('https://api.spotify.com/v1/me/player/currently-playing', [
             'headers' => [
-                'Authorization' => 'Bearer ' . $accessToken,
+                'Authorization' => 'Bearer ' . Auth::user()->UserSpotify->access_token,
             ],
         ]);
 
@@ -138,10 +136,133 @@ class SpotifyController extends Controller {
 
             // Return the current track data as JSON response
             return response()->json(['current_track' => $currentTrack]);
-        } elseif ($response->getStatusCode() == 401) {
+
+        } else {
+            $currentTrack['name'] = "Not Current Playing";
+            $currentTrack['artists'] = "Dj Darmor";
+            $currentTrack['imageUrl'] = "https://www.gothiccountry.se/images/pictures2/no_album_art__no_cover.jpg";
+
+            // Return the current track data as JSON response
+            return response()->json(['current_track' => $currentTrack]);
+        }
+    }
+
+    public static function previousTrack() {
+        if (Auth::user()->UserSpotify->token_expires_at < now()) {
+            self::getNewRefreshToken();
+        }
+
+        $client = new Client();
+        $response = $client->post('https://api.spotify.com/v1/me/player/previous', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . Auth::user()->UserSpotify->access_token,
+            ],
+        ]);
+
+        $data = json_decode($response->getBody());
+
+        // Check if the user is currently listening to a track
+        if ($response->getStatusCode() == 200) {
+
+        } else {
+
+        }
+
+    }
+    public static function nextTrack() {
+        if (Auth::user()->UserSpotify->token_expires_at < now()) {
+            self::getNewRefreshToken();
+        }
+
+        $client = new Client();
+        $response = $client->post('https://api.spotify.com/v1/me/player/next', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . Auth::user()->UserSpotify->access_token,
+            ],
+        ]);
+
+        $data = json_decode($response->getBody());
+
+        // Check if the user is currently listening to a track
+        if ($response->getStatusCode() == 200) {
 
         } else {
 
         }
     }
+
+    public static function playpauseTrack() {
+        if (Auth::user()->UserSpotify->token_expires_at < now()) {
+            self::getNewRefreshToken();
+        }
+
+        $client = new Client();
+        if (self::getIsPlaying()) {
+            $response = $client->put('https://api.spotify.com/v1/me/player/pause', [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . Auth::user()->UserSpotify->access_token,
+                ],
+            ]);
+        } else {
+            $response = $client->put('https://api.spotify.com/v1/me/player/play', [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . Auth::user()->UserSpotify->access_token,
+                ],
+            ]);
+        }
+
+        $data = json_decode($response->getBody());
+
+        // Check if the user is currently listening to a track
+        if ($response->getStatusCode() == 200) {
+
+        } else {
+
+        }
+    }
+
+    public static function getDevices() {
+        if (Auth::user()->UserSpotify->token_expires_at < now()) {
+            self::getNewRefreshToken();
+        }
+
+        $client = new Client();
+        $response = $client->get('https://api.spotify.com/v1/me/player/devices', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . Auth::user()->UserSpotify->access_token,
+            ],
+        ]);
+
+        $data = json_decode($response->getBody());
+
+        // Check if the user is currently listening to a track
+        if ($response->getStatusCode() == 200) {
+            return $data->devices[0];
+        } else {
+
+        }
+    }
+
+    public static function getIsPlaying() {
+        if (Auth::user()->UserSpotify->token_expires_at < now()) {
+            self::getNewRefreshToken();
+        }
+
+        $client = new Client();
+        $response = $client->get('https://api.spotify.com/v1/me/player', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . Auth::user()->UserSpotify->access_token,
+            ],
+        ]);
+
+        $data = json_decode($response->getBody());
+
+        // Check if the user is currently listening to a track
+        if ($response->getStatusCode() == 200) {
+            return $data->is_playing;
+        } else {
+
+        }
+    }
+
 }

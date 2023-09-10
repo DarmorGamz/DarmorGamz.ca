@@ -44,6 +44,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/auth/spotify', [SpotifyController::class, 'redirectToSpotify']);
     Route::get('/auth/spotify/callback', [SpotifyController::class, 'handleSpotifyCallback']);
     Route::get('/spotify-getCurrentTrack', [SpotifyController::class, 'getCurrentTrack']);
+    Route::get('/spotify-Previous', [SpotifyController::class, 'previousTrack']);
+    Route::get('/spotify-PlayPause', [SpotifyController::class, 'playpauseTrack']);
+    Route::get('/spotify-Next', [SpotifyController::class, 'nextTrack']);
 
 	Route::get('billing', function () {
 		return view('billing');
